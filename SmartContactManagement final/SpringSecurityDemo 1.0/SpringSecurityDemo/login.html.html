@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    <style>
+        .car {
+    border-style: solid;
+    border-radius: 8px;
+    border-width: 0px;
+    text-align: center;
+    margin: 20px;
+    padding: 20px;
+}
+.bg {
+    background-color: red;
+    height: 200px;
+}
+.home{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+.container{
+    display: flex;
+    justify-content: space-between;
+}
+    </style>
+</head>
+<body>
+
+    <!-- <div class='car shadow' id='sectionLogin'>
+        <p id='done'> </p>
+        <h1> Login </h1>
+        <div>
+            <input type='text' placeholder='Enter your name' id='name' /><br />
+            <br />
+            <input type='text' placeholder='Enter your password' id='password' />
+            <div class='mt-2'>
+                <button class='btn btn-primary' id='signUp'> SignUp </button>
+                <button class='btn btn-primary' id='signIn'> SignIn </button>
+            </div>
+        </div>
+    </div> -->
+
+    <div class='car shadow' id='sectionSignIn'>
+        <h1> Login </h1>
+        <label> Name </label><input type='text' id='namelog' class='input' /><br />
+        <label> Password </label><input type='password' id='passwordlog' class='input2' />
+        <div>
+            <button class='btn btn-primary mt-2' id='btnlog'> Login In </button>
+            <button id="signUp" onclick="display('sectionEmail')" class="btn btn-primary"> SignUp </button>
+        </div>
+    </div>
+    <div id='sectionEmail' class='car shadow' style="height:100vh;">
+        <h1> Verify your Email </h1>
+        <div>
+            <p> Enter your Email </p>
+            <input type='email' id='vemail' required='required' />
+            <p id='errorverified'></p>
+            <br />
+            <div>
+                <button class='btn btn-primary' id='btnverify'> Click Here </button>
+            </div>
+        </div>
+    </div>
+    <div id='sectionOTP' class='car shadow'>
+        <h1> Enter OTP here! </h1>
+        <div>
+            <input type='text' id='otp'/>
+            <p id='otperror'></p>
+            
+            <div>
+                <button class='btn btn-primary' id='btnotp'> Verify </button>
+                <button class='btn btn-primary' id='btnresend'> Resend again </button>
+            </div>
+        </div>
+     </div>
+
+<div class='car shadow' id='sectionSignUp'>
+    <label> Name </label><input type='text' id='fullName' class='input' /><br />
+    <label> Email </label><input type='email' id='userName' class='input' /><br />
+    <label> Password </label><input type='password' id='password11' class='input2' />
+    <div style='text-align:center;'>
+        <button class='btn btn-primary mt-2' id='regi'> Register Here </button>
+        <button class='btn btn-primary mt-2 d-none' id='log' onclick="display('sectionSignIn')"> Login In </button>
+    </div>
+    <p id='successregi'></p>
+</div>
+
+<div id='sectionHome' class="bg-light shadow p-2">
+    <div>
+        <div class="home">
+            <button class="btn btn-primary" id="contactPageRedirect"> Got to Contact Page </button>
+            <div>
+                <label id="nameHome">  </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="sectionFormcontainer" class="container">
+    <div id='car'></div>
+    <div> <button id="logout"> Logout </button> </div>
+    <div id='list'></div>
+    <button id='btn'> Add Contact </button>
+</div>
+
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+    <script>
+        //localStorage.removeItem('token');
+        let count=0;
+            let signUpId = document.getElementById('signUp');
+            let signInId = document.getElementById('signIn');
+
+            let objresponse=[];
+        let vemailId = document.getElementById('vemail');
+        let btnverifyId = document.getElementById('btnverify');
+        btnverifyId.addEventListener('click', function() {
+            //console.log(vemailId.value);
+        if(count===0){
+        if (vemailId.value !== '') {
+            console.log(vemailId.value);
+            //let url = 'http://localhost:8443/sendEmail';
+            let url = 'http://localhost:8443/mail/sendEmail';
+            let option = {
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    "email": vemailId.value
+                })
+            };
+            fetch(url, option)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(jsonData) {
+                    if (jsonData) {
+                        ++count;
+                        btnverifyId.setAttribute('onclick', "display('sectionOTP')");
+                        objresponse.push(jsonData);
+                        console.log("ok")
+                        //document.getElementById('success').textContent = 'Enter your OTP';
+                    } else {
+                        vemailId.value = '';
+                        document.getElementById('errorverified').textContent = 'Verifiey your email once!';
+                        document.getElementById('errorverified').style.color = 'red';
+                    }
+                });
+        }
+    }
+    });
+
+
+
+let logoutId=document.getElementById('logout');
+logoutId.addEventListener('click',function(){
+    localStorage.removeItem('jwttoken');
+    if(localStorage.getItem('jwttoken')===null){
+        console.log('token deleted');
+        logoutId.setAttribute('onclick',"display('sectionSignIn')");
+    }
+    
+})
+let btnotpId=document.getElementById('btnotp');
+let btnresendId=document.getElementById('btnresend');
+function fun(){
+    
+    // let url = 'http://localhost:8443/resendOtpAgain';
+    // console.log('resend button');
+    //     let option = {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type':'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //             "id":(objresponse[0])
+    //         })
+    //     };
+    //     console.log(objresponse);
+    //     fetch(url, option)
+    //         .then(function(response) {
+    //             return response.json();
+    //         })
+    //         .then(function(jsonData) {
+    //             if (jsonData) {
+    //                 //console.log(jsonData)
+    //               //  windows.href='http://127.0.0.1:5500/jwt_web/otp%20demo/Login2.html';
+    //                 objresponse[0]=(jsonData);
+    //                 //document.getElementById('success').textContent = 'Enter your OTP';
+    //             }
+    //         });
+}
+let count2=0;
+btnotpId.addEventListener('click',function(){
+    if(count2==0){  
+    let otpId=document.getElementById('otp').value;
+    console.log(objresponse[0]);
+    console.log(otpId)
+    if(otpId!==''){
+        console.log(objresponse[0]);
+        let url = 'http://localhost:8443/mail/OtpVerification';
+      //  let url = 'http://localhost:8443/OtpVerification';
+        console.log(objresponse[0]);
+    let option = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "id":(objresponse[0]),
+            "otp": otpId
+        })
+        };
+        
+        fetch(url,option)
+        
+        .then(function(response){
+            return response.text();
+        })
+        .then(function(jsonData){
+            console.log(jsonData==='ok')
+            if(jsonData==='ok'){
+                count2+=1;
+                btnotpId.setAttribute('onclick',"display('sectionSignUp')");
+                //window.location.hash='sectionSignUp';
+                document.getElementById('success').textContent = 'Now Register yourself';
+            }
+            else{
+                document.getElementById('otperror').textContent='Check your otp';
+                document.getElementById('otperror').style.color='red';
+            }
+        });
+    }
+}
+});
+btnresendId.addEventListener('click',function(){
+   // let url = 'http://localhost:8443/resendOtpAgain';
+   let url = 'http://localhost:8443/mail/resendOtpAgain';
+   
+    console.log('resend button');
+        let option = {
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                "id":(objresponse[0])
+            })
+        };
+        console.log(objresponse);
+        fetch(url, option)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(jsonData) {
+                if (jsonData) {
+                    //console.log(jsonData)
+                  //  windows.href='http://127.0.0.1:5500/jwt_web/otp%20demo/Login2.html';
+                    objresponse[0]=(jsonData);
+                    //document.getElementById('success').textContent = 'Enter your OTP';
+                }
+            });
+});
+
+
+
+
+
+let nameId = document.getElementById('fullName');
+let emailId = document.getElementById('userName');
+let passwordId = document.getElementById('password11');
+let regiId = document.getElementById('regi');
+let logId = document.getElementById('log');
+let successregiId = document.getElementById('successregi');
+regiId.addEventListener('click', function() {
+    let datapass=passwordId.value;
+    console.log(datapass);
+    let obj = {
+        fullName: nameId.value,
+        username: emailId.value,
+        password: datapass
+    };
+    console.log(obj);
+    //let url = "http://localhost:8443/toRegister";
+    let url = "http://localhost:8443/user/toRegister";
+    let option = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+        body: JSON.stringify(obj)
+    };
+    fetch(url, option)
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(jsonData) {
+            if (jsonData!=="try again later") {
+                logId.classList.remove('d-none');
+                successregiId.textContent = 'you have successful registerd now go for login';
+                regiId.classList.add('d-none');
+            }
+        }).catch((e) => {
+            console.log(e);
+        });
+});
+let array=[];
+let array2=[]; //data need to be added if any data is already presented in database
+
+let namelogId = document.getElementById('namelog');
+let passwordlogId = document.getElementById('passwordlog');
+let btnlogId = document.getElementById('btnlog');
+let count3=0;
+btnlogId.addEventListener('click', function() {
+    if(count3===0){
+    let obj = {
+        user_name: namelogId.value,
+        password: passwordlogId.value
+    };
+    console.log(obj);
+   // let url = "http://localhost:8443/userLogin";
+    let url = "http://localhost:8443/user/userLogin";
+    let option = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(obj)
+    };
+    fetch(url, option)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(jsonData) {
+             if ((jsonData.lenght!==0)&& obj.user_name!=='' && obj.password) {
+                count3+=1;
+                localStorage.setItem('jwttoken',jsonData.token);
+                console.log(jsonData.token+' data stored');
+                 document.getElementById('nameHome').textContent=jsonData.fullName;
+                
+                btnlogId.setAttribute('onclick',"display('sectionHome')");
+            //window.location.hash='sectionHome'
+            console.log(jsonData);
+        }
+        }).catch((e) => {
+            console.log(e);
+        });
+    }
+});
+
+let btnId = document.getElementById('btn');
+let listId=document.getElementById('list');
+function fun2({data}){
+    console.log(data);
+    let id=data.id;
+    let name=data.contactName;
+    let mobilenumber=data.contactNumber;
+    console.log(id,name,mobilenumber);
+    let divId='div'+array.length;
+    let div=document.createElement('div');
+    div.id=divId;
+    listId.appendChild(div);
+    let label1=document.createElement('label');
+    label1.textContent=name;
+    label1.id='labelname'+array.length;
+    div.appendChild(label1);
+    let label2=document.createElement('label');
+    label2.textContent=mobilenumber;
+    label2.id='labelmobilenumber'+array.length;
+    div.appendChild(label2);
+    let savebtn=document.createElement('button');
+    savebtn.id='save'+array.length;
+    savebtn.textContent='Update Here';
+    savebtn.classList.add('btn','btn-success');
+    div.appendChild(savebtn);
+    let deletebtn=document.createElement('button');
+    deletebtn.id='delete'+array.length;
+    deletebtn.textContent='❌'; 
+    deletebtn.style.width="50px";
+    div.appendChild(deletebtn);
+    document.getElementById(savebtn.id).addEventListener('click',function(){
+        let item=localStorage.getItem('jwttoken');
+        let input=prompt('Enter your updated number');
+        let inputname=prompt('Enter your updated name')
+        let obj={
+            id:id,
+            contactName:inputname,
+            contactNumber:parseInt(input)
+        };
+        console.log(obj);
+        let url="http://localhost:8443/contact/updateContactNumber/";
+      //  let url="http://localhost:8443/updateContactNumber";
+        let option={
+            method:'PUT',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization': `Bearer ${item}`
+                },
+                body:JSON.stringify(obj)
+            };
+        fetch(url,option)
+        .then(function(response){
+            return response.json();
+        })
+        .then(function(jsonData){
+            //console.log(jsonData);
+            if(input!==''){
+                label2.textContent=input;
+            }
+            if(inputname!==''){
+                label1.textContent=inputname
+            }
+        }).catch((error)=>{
+            console.log(error);
+        });
+    });
+    document.getElementById(deletebtn.id).addEventListener('click',function(){
+        console.log('delete1');
+        console.log(id);
+        let item2=localStorage.getItem('jwttoken');
+        console.log(item2);
+        let obj={
+            id:id,
+            contactName:name,
+            contactNumber:parseInt(mobilenumber)
+        };
+        console.log(obj.id);
+         
+        let url=`http://localhost:8443/contact/deleteContact/`;
+        console.log(item2);
+        //let url=`http://localhost:8443/deleteContact/${id}`;
+        let option={
+            method:'DELETE',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization': `Bearer ${item2}`
+                },
+            body:JSON.stringify(obj)
+        };
+        fetch(url,option)
+        .then(function(response){
+            console.log(response)
+            return response.text();
+        })
+        .then(function(jsonData){
+            console.log(jsonData!=='null');
+            document.getElementById(divId).removeChild(label1);
+            document.getElementById(divId).removeChild(label2);
+            document.getElementById(divId).removeChild(savebtn);
+            document.getElementById(divId).removeChild(deletebtn);
+        }).catch((error)=>{
+            console.log(error);
+        });
+    });
+}
+
+
+let count4=0;
+let contactPageRedirectId=document.getElementById('contactPageRedirect');
+contactPageRedirectId.addEventListener('click',function(){
+    let item=localStorage.getItem('jwttoken');
+    let url="http://localhost:8443/contact/getAllContacts";
+   // let url="http://localhost:8443/getAllContacts";
+    let option={
+        method:'GET',
+        headers:{
+            'Authorization': `Bearer ${item}`
+        }
+    };
+    fetch(url,option)
+    .then(function(response){
+        console.log(response);
+      return response.json();
+    })
+    .then(function(jsonData){
+        if(count4===0){
+            count4+=1;
+            for(data of jsonData){
+                array.push({id:data.id,name:data.contactName,mobilenumber:data.contactNumber});
+                //console.log(data.id);
+                //console.log({data});
+                fun2({data});
+            }
+            contactPageRedirectId.setAttribute('onclick',"display('sectionFormcontainer')");
+        }
+    });
+});
+
+// let btnId = document.getElementById('btn');
+// let listId=document.getElementById('list');
+let count1 = 0;
+function fun3({jsonData}){
+    //console.log(jsonData);
+    let id=jsonData.id;
+    let name=jsonData.contactName;
+    let mobilenumber=jsonData.contactNumber;
+    console.log(id,name,mobilenumber);
+    let divId='div'+array.length;
+    let div=document.createElement('div');
+    div.id=divId;
+    listId.appendChild(div);
+    let label1=document.createElement('label');
+    label1.textContent=name;
+    label1.id='labelname'+array.length;
+    div.appendChild(label1);
+    let label2=document.createElement('label');
+    label2.textContent=mobilenumber;
+    label2.id='labelmobilenumber'+array.length;
+    div.appendChild(label2);
+    let savebtn=document.createElement('button');
+    savebtn.id='save'+array.length;
+    savebtn.textContent='Update Here';
+    savebtn.classList.add('btn','btn-success');
+    div.appendChild(savebtn);
+    let deletebtn=document.createElement('button');
+    deletebtn.id='delete'+array.length;
+    deletebtn.textContent='❌'; 
+    deletebtn.style.width="50px";
+    div.appendChild(deletebtn);
+    document.getElementById(savebtn.id).addEventListener('click',function(){
+        console.log('not url');
+        let item=localStorage.getItem('jwttoken');
+        let input=prompt('Enter your updated number');
+        let inputname=prompt('Enter your updated name');
+        let obj={
+            id:id,
+            contactName:inputname,
+            contactNumber:parseInt(input)
+        };
+        let url="http://localhost:8443/contact/updateContactNumber/";
+        let option={
+            method:'PUT',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization': `Bearer ${item}`
+                },
+                body:JSON.stringify(obj)
+            };
+        fetch(url,option)
+        .then(function(response){
+            return response.text();
+        })
+        .then(function(jsonData){
+            if(input!==''){
+                label2.textContent=input;
+            }
+            if(inputname!==''){
+                label1.textContent=inputname
+            }
+            console.log(jsonData);
+        }).catch((error)=>{
+            console.log(error);
+        });
+    });
+    document.getElementById(deletebtn.id).addEventListener('click',function(){
+        let item1=localStorage.getItem('jwttoken');
+       // let item2=localStorage.getItem('jwttoken');
+      //  console.log(item2);
+        let obj={
+            id:id,
+            contactName:name,
+            contactNumber:parseInt(mobilenumber)
+        };
+        console.log(obj.id);
+        console.log(item1);
+        //TODO changed the url these method not to be called but called
+      //  let url=`URL`;
+      let url=`http://localhost:8443/contact/deleteContact/`;
+     // let url=`http://localhost:8443/contact/deleteContact/${id}`;
+        let option={
+            method:'DELETE',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization': `Bearer ${item1}`
+                },
+                body:JSON.stringify(obj)
+            };
+        fetch(url,option)
+        .then(function(response){
+            return response.text();
+        })
+        .then(function(jsonData){
+            console.log(jsonData);
+            
+        }).catch((error)=>{
+            console.log(error);
+        });
+    document.getElementById(divId).removeChild(label1);
+    document.getElementById(divId).removeChild(label2);
+    document.getElementById(divId).removeChild(savebtn);
+    document.getElementById(divId).removeChild(deletebtn);
+    });
+}
+
+// for(let obj of array2){
+//     array.push({id:obj.id,name:obj.contactName,mobilenumber:obj.contactNumber});
+//     console.log(array);
+//     fun2(obj.id,obj.name,obj.mobilenumber);
+// }
+btnId.addEventListener('click', function() {
+    
+    if (count1 === 0) {
+        count1 += 1;
+        let carId = document.getElementById('car');
+        carId.classList.add('bg');
+        let btnsave = document.createElement('button');
+        btnsave.textContent = 'save Contact';
+        btnsave.id='btnsaveId';
+        carId.appendChild(btnsave);
+        
+        let input1=document.createElement('input');
+        input1.type='text';
+        input1.id='uname';
+        carId.appendChild(input1);
+        
+        let input2=document.createElement('input');
+        input2.type='text';
+        input2.id='mobilenumber';
+        carId.appendChild(input2);
+        
+        
+        
+        
+        document.getElementById(btnsave.id).addEventListener('click', function() {
+            let obj={
+                contactName:document.getElementById(input1.id).value,
+                contactNumber:parseInt(document.getElementById(input2.id).value)
+            };
+            array.push(obj);
+            let item=localStorage.getItem('jwttoken');
+            console.log(item);
+            console.log(array);
+          //  let url='http://localhost:8443/addContact';
+          let url='http://localhost:8443/contact/addContact';
+            let option={
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':`Bearer ${item}`
+                },
+                body:JSON.stringify(obj)
+            };
+            fetch(url,option)
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonData){
+                console.log('json parse data',jsonData);
+                fun3({jsonData});
+            }).catch((error)=>{
+                console.log(error);
+            });
+            //fun2(obj.id,obj.contactName,obj.contactNumber);
+            carId.removeChild(btnsave);
+            carId.removeChild(input1);
+            carId.removeChild(input2);
+            carId.classList.remove('bg');
+            count1 = 0;
+        });
+    }
+});
+        
+
+
+
+
+
+
+
+
+
+    </script>
+    <script type="text/javascript" src="https://d1tgh8fmlzexmh.cloudfront.net/ccbp-static-website/js/ccbp-ui-kit.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- let fieldIndex = 1;
+        let fieldsData = [];
+
+        document.getElementById('add-field-button').addEventListener('click', function() {
+            const formContainer = document.getElementById('sectionFormcontainer');
+            const lastField = formContainer.lastElementChild.getElementsByClassName('field-input')[0];
+            
+            if (lastField.value.trim() !== "") {
+                const newFieldContainer = document.createElement('div');
+                newFieldContainer.className = 'field-container';
+                newFieldContainer.setAttribute('data-index', fieldIndex);
+                
+                const newField = document.createElement('input');
+                newField.type = 'text';
+                newField.className = 'field-input form-control';
+                newField.placeholder = 'Enter value';
+                
+                const updateButton = document.createElement('button');
+                updateButton.className = 'btn btn-primary btn-update';
+                updateButton.innerHTML = 'Update';
+                updateButton.setAttribute('onclick',` updateField(${fieldIndex})`);
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger btn-delete';
+                deleteButton.innerHTML = 'Delete';
+                deleteButton.setAttribute('onclick', `deleteField(${fieldIndex})`);
+                
+                newFieldContainer.appendChild(newField);
+                newFieldContainer.appendChild(updateButton);
+                newFieldContainer.appendChild(deleteButton);
+                
+                formContainer.appendChild(newFieldContainer);
+                fieldIndex++;
+            } else {
+                alert('Please fill out the previous field before adding a new one.');
+            }
+        });
+
+        document.getElementById('save-button').addEventListener('click', function() {
+            const fieldInputs = document.getElementsByClassName('field-input');
+            fieldsData = [];
+
+            for (let input of fieldInputs) {
+                if (input.value.trim() !== "") {
+                    fieldsData.push(input.value.trim());
+                }
+            }
+
+            
+            const apiUrl = 'YOUR_API_ENDPOINT';
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(fieldsData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Data saved successfully.');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while saving data.');
+            });
+        });
+
+        function updateField(index) {
+            const fieldContainer = document.querySelector(`.field-container[data-index='${index}']`);
+            const fieldInput = fieldContainer.getElementsByClassName('field-input')[0];
+            console.log(fieldInput.value);
+            if (fieldInput.value.trim() !== "") {
+                
+                const apiUrl = "URL ";
+                
+                fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ value: fieldInput.value.trim() })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Update Success:', data);
+                    alert('Field updated successfully.');
+                })
+                .catch((error) => {
+                    console.error('Update Error:', error);
+                    alert('An error occurred while updating the field.');
+                });
+            } else {
+                alert('Please enter a value to update.');
+            }
+        }
+
+        function deleteField(index) {
+            const fieldContainer = document.querySelector(`.field-container[data-index='${index}']`);
+            console.log(index);
+            fieldContainer.remove();
+            // const apiUrl = YOUR_API_DELETE_ENDPOINT/${index};
+            
+            // fetch(apiUrl, {
+            //     method: 'DELETE'
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     console.log('Delete Success:', data);
+            //     alert('Field deleted successfully.');
+            //     fieldContainer.remove();
+            // })
+            // .catch((error) => {
+            //     console.error('Delete Error:', error);
+            //     alert('An error occurred while deleting the field.');
+            // });
+        }
+
